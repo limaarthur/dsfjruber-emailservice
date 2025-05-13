@@ -17,12 +17,14 @@ import java.io.IOException;
 @Component
 public class SendGridEmailSender implements EmailSenderGateway {
 
-    @Value("${sendgrid.api.key}")
-    private String sendGridApiKey;
+    private final SendGrid sendGrid;
 
     @Value("${sendgrid.from.email}")
     private String fromEmail;
 
+    public SendGridEmailSender(SendGrid sendGrid) {
+        this.sendGrid = sendGrid;
+    }
 
     @Override
     public void sendEmail(String to, String subject, String body) {
@@ -32,9 +34,7 @@ public class SendGridEmailSender implements EmailSenderGateway {
         Mail mail = new Mail(from, subject, toEmail, content);
         // Configura e cria o e-mail que será enviado com as informações de remetente do e-mail (from),  assunto do e-mail (subject), estinatário do e-mail (toEmail) e conteúdo ou corpo do e-mail (content).
 
-        SendGrid sendGrid = new SendGrid(sendGridApiKey); // Interagi e inicializa a comunicação com a API do SendGrid
         Request request = new Request(); // configura a requisição HTTP que será feita para a API do SendGrid
-
         try {
             request.setMethod(Method.POST); // Define que a requisição será POST
             request.setEndpoint("mail/send"); // Define o endpoint da API para envio de e-mail
